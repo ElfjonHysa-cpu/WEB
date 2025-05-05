@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Netflix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #000;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      scroll-behavior: smooth;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(255, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #e50914;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+    .nav-links li {
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 400;
+      position: relative;
+      transition: color 0.3s;
+    }
+    .nav-links li:hover {
+      color: #e50914;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 30px;
+      left: 0;
+      background: #111;
+      padding: 15px;
+      border-radius: 8px;
+      list-style: none;
+      box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+    }
+    .nav-links li:hover .dropdown {
+      display: block;
+    }
+    .dropdown li {
+      padding: 8px 0;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .search-profile {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .search-profile i {
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .search-profile i:hover {
+      color: #e50914;
+    }
+    .profile img {
+      width: 35px;
+      border-radius: 50%;
+      border: 2px solid #e50914;
+    }
+    .hero {
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1616530940355-351fabd68da6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+    }
+    .hero-content {
+      position: relative;
+      max-width: 700px;
+      padding: 20px;
+      animation: fadeInUp 1s ease-out;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #e50914, #b1060f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      font-weight: 300;
+      margin-bottom: 30px;
+      color: #d1d5db;
+    }
+    .hero-buttons .btn {
+      background: #e50914;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 25px;
+      transition: transform 0.3s, background 0.3s;
+      border: none;
+    }
+    .hero-buttons .btn:hover {
+      background: #b1060f;
+      transform: translateY(-3px);
+    }
+    .row {
+      margin: 80px 40px;
+    }
+    .row h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #e50914;
+    }
+    .row-posters {
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+      padding: 10px 0;
+      scrollbar-width: none;
+    }
+    .row-posters::-webkit-scrollbar {
+      display: none;
+    }
+    .row-poster {
+      width: 220px;
+      height: 330px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .row-poster:hover {
+      transform: scale(1.1);
+    }
+    .poster-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: 0 0 10px 10px;
+    }
+    .row-poster:hover .poster-info {
+      opacity: 1;
+    }
+    .poster-info h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .poster-info p {
+      font-size: 0.7rem;
+      color: #d1d5db;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: #111;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      text-align: center;
+    }
+    .modal-content img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .modal-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .modal-content p {
+      font-size: 1rem;
+      color: #d1d5db;
+      margin-bottom: 20px;
+    }
+    .close-modal {
+      background: #e50914;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      border: none;
+    }
+    footer {
+      padding: 50px 40px;
+      background: #111;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-links a {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: #d1d5db;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover {
+      color: #e50914;
+    }
+    .social-icons a {
+      font-size: 1.5rem;
+      margin: 0 10px;
+      color: #d1d5db;
+      transition: color 0.3s;
+    }
+    .social-icons a:hover {
+      color: #e50914;
+    }
+    .hamburger {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #fff;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+      .nav-links {
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        background: #111;
+        width: 100%;
+        padding: 20px;
+        display: none;
+      }
+      .nav-links.show {
+        display: flex;
+      }
+      .search-profile {
+        gap: 15px;
+      }
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .row {
+        margin: 60px 20px;
+      }
+      .row-poster {
+        width: 160px;
+        height: 240px;
+      }
+    }
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 0 20px;
+      }
+      .logo {
+        font-size: 1.5rem;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero p {
+        font-size: 0.9rem;
+      }
+      .hero-buttons .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+      .row-poster {
+        width: 130px;
+        height: 195px;
+      }
+      .modal-content {
+        padding: 20px;
+        margin: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">Netflix</div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <ul class="nav-links">
+      <li onclick="scrollToSection('home')">Home</li>
+      <li onclick="scrollToSection('series')">Series</li>
+      <li onclick="scrollToSection('films')">Films</li>
+      <li onclick="scrollToSection('trending')">Trending</li>
+      <li onclick="scrollToSection('watchlist')">Watchlist</li>
+      <li>Genres
+        <ul class="dropdown">
+          <li>Action</li>
+          <li>Drama</li>
+          <li>Comedy</li>
+          <li>Sci-Fi</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="search-profile">
+      <i class="fas fa-search"></i>
+      <div class="profile">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>Discover Epic Stories</h1>
+      <p>Stream unlimited series, films, and more. Anytime, anywhere.</p>
+      <div class="hero-buttons">
+        <button class="btn">Start Watching</button>
+      </div>
+    </div>
+  </section>
+  <body>
+    <header class="navbar">
+      <div class="logo">Netflix</div>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
+      <ul class="nav-links">
+        <li onclick="scrollToSection('home')">Home</li>
+        <li onclick="scrollToSection('series')">Series</li>
+        <li onclick="scrollToSection('films')">Films</li>
+        <li onclick="scrollToSection('trending')">Trending</li>
+        <li onclick="scrollToSection('watchlist')">Watchlist</li>
+        <li>Genres
+          <ul class="dropdown">
+            <li>Action</li>
+            <li>Drama</li>
+            <li>Comedy</li>
+            <li>Sci-Fi</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="search-profile">
+        <i class="fas fa-search"></i>
+        <div class="profile">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+        </div>
+      </div>
+    </header>
+    <section class="row" id="series">
+      <h2>Popular Series</h2>
+      <div class="row-posters">
+        <div class="row-poster" onclick="openModal('Series 1', 'An epic adventure awaits.', 'https://image.tmdb.org/t/p/w500/qJRB789ceLryrLvOKrZqLKr2CGf.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/qJRB789ceLryrLvOKrZqLKr2CGf.jpg" alt="">
+          <div class="poster-info">
+            <h3>Series 1</h3>
+            <p>Rating: 8.5/10</p>
+          </div>
+        </div>
+        <div class="row-poster" onclick="openModal('Series 2', 'A thrilling drama.', 'https://image.tmdb.org/t/p/w500/ugZW8ocsrfgI95pnQ7wrmKDxIe.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/ugZW8ocsrfgI95pnQ7wrmKDxIe.jpg" alt="">
+          <div class="poster-info">
+            <h3>Series 2</h3>
+            <p>Rating: 7.8/10</p>
+          </div>
+        </div>
+        <div class="row-poster" onclick="openModal('Series 3', 'Sci-fi masterpiece.', 'https://image.tmdb.org/t/p/w500/2CAL2433ZeIihfX1Hb2139CX0pW.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/2CAL2433ZeIihfX1Hb2139CX0pW.jpg" alt="">
+          <div class="poster-info">
+            <h3>Series 3</h3>
+            <p>Rating: 9.0/10</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="row" id="films">
+      <h2>Blockbuster Films</h2>
+      <div class="row-posters">
+        <div class="row-poster" onclick="openModal('Film 1', 'Action-packed thriller.', 'https://image.tmdb.org/t/p/w500/mYLOqiStMxDK3fYZFirgrMt8z5d.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/mYLOqiStMxDK3fYZFirgrMt8z5d.jpg" alt="">
+          <div class="poster-info">
+            <h3>Film 1</h3>
+            <p>Rating: 8.2/10</p>
+          </div>
+        </div>
+        <div class="row-poster" onclick="openModal('Film 2', 'Heartwarming drama.', 'https://image.tmdb.org/t/p/w500/zrPpUlehQaBf8YX2NrVrKK8IEpf.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/zrPpUlehQaBf8YX2NrVrKK8IEpf.jpg" alt="">
+          <div class="poster-info">
+            <h3>Film 2</h3>
+            <p>Rating: 7.9/10</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="row" id="trending">
+      <h2>Trending Now</h2>
+      <div class="row-posters">
+        <div class="row-poster" onclick="openModal('Trending 1', 'Viral sensation.', 'https://image.tmdb.org/t/p/w500/zsbolOkw8RhTU4DKOrpf4M7KCmi.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/zsbolOkw8RhTU4DKOrpf4M7KCmi.jpg" alt="">
+          <div class="poster-info">
+            <h3>Trending 1</h3>
+            <p>Rating: 8.7/10</p>
+          </div>
+        </div>
+        <div class="row-poster" onclick="openModal('Trending 2', 'Must-watch comedy.', 'https://image.tmdb.org/t/p/w500/bQLrHIRNEkE3PdIWQrZHynQZazu.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/bQLrHIRNEkE3PdIWQrZHynQZazu.jpg" alt="">
+          <div class="poster-info">
+            <h3>Trending 2</h3>
+            <p>Rating: 7.5/10</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="row" id="watchlist">
+      <h2>Your Watchlist</h2>
+      <div class="row-posters">
+        <div class="row-poster" onclick="openModal('Watchlist 1', 'Personal favorite.', 'https://image.tmdb.org/t/p/w500/n6bUvigpRFqSwmPp1m2YADdbRBc.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/n6bUvigpRFqSwmPp1m2YADdbRBc.jpg" alt="">
+          <div class="poster-info">
+            <h3>Watchlist 1</h3>
+            <p>Rating: 8.0/10</p>
+          </div>
+        </div>
+        <div class="row-poster" onclick="openModal('Watchlist 2', 'Classic hit.', 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg')">
+          <img src="https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg" alt="">
+          <div class="poster-info">
+            <h3>Watchlist 2</h3>
+            <p>Rating: 8.3/10</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <img id="modal-img" src="" alt="">
+        <h3 id="modal-title"></h3>
+        <p id="modal-desc"></p>
+        <button class="close-modal" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  
+    <footer>
+      <div class="footer-links">
+        <a href="#">Help Center</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </footer>
+  
+    <script>
+      function scrollToSection(id) {
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+      }
+  
+      function toggleMenu() {
+        document.querySelector('.nav-links').classList.toggle('show');
+      }
+  
+      function openModal(title, desc, imgSrc) {
+        const modal = document.getElementById('modal');
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-desc').innerText = desc;
+        document.getElementById('modal-img').src = imgSrc;
+        modal.style.display = 'flex';
+      }
+  
+      function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+      }
+    </script>
+  </body>
+</html>
